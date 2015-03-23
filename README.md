@@ -9,8 +9,8 @@ TODO: Write short description here and embulk-parser-regexp.gemspec file.
 
 ## Configuration
 
-- **property1**: description (string, required)
-- **property2**: description (integer, default: default-value)
+- **format**: regular expression (string, required)
+- **field_types**: field name and field type array (array, required)
 
 ## Example
 
@@ -19,15 +19,17 @@ in:
   type: any file input plugin type
   parser:
     type: regexp
-    property1: example1
-    property2: example2
-```
-
-(If guess supported) you don't have to write `parser:` section in the configuration file. After writing `in:` section, you can let embulk guess `parser:` section using this command:
-
-```
-$ embulk install embulk-parser-regexp
-$ embulk guess -g regexp config.yml -o guessed.yml
+    format: '^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$'
+    field_types:
+      - {name: host, type: string}
+      - {name: user, type: string}
+      - {name: time, type: timestamp}
+      - {name: method, type: string}
+      - {name: path, type: string}
+      - {name: code, type: string}
+      - {name: size, type: string}
+      - {name: referer, type: string}
+      - {name: agent, type: string}
 ```
 
 ## Build
