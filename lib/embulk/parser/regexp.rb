@@ -30,15 +30,15 @@ module Embulk
       def run(file_input)
         decoder_task = @task.load_config(Java::LineDecoder::DecoderTask)
         decoder = Java::LineDecoder.new(file_input.instance_eval { @java_file_input }, decoder_task)
-        record = []
         while decoder.nextFile
           while line = decoder.poll
+            record = []
             m = @regexp.match line
             task["field_types"].each do |v|
               record << type_convert(m[v["name"]], v["type"])
             end
+            page_builder.add record
           end
-          page_builder.add record
         end
         page_builder.finish
       end
